@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import os 
 from preprocessor import get_processed_data
 from helper import get_player, compare_players, plot_comparison_bar, plot_top10, plot_radar, player_card
 
@@ -61,12 +62,20 @@ mode = st.sidebar.radio("Navigate", ["Home", "Single Player Stats", "Compare Two
 st.sidebar.markdown("---")
 st.sidebar.info("Data: Fbref | Season 24/25")
 
+
 # =====================================================
 # HOME
 # =====================================================
 if mode == "Home":
-    try: st.image("football_analytics_homepage.png", use_container_width=True)
-    except: st.error("Please ensure 'football_analytics_homepage.png' is in the project folder.")
+    # 1. Get the path to the image dynamically
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    homepage_img = os.path.join(current_dir, "football_analytics_homepage.png")
+
+    # 2. Display it
+    try: 
+        st.image(homepage_img, use_container_width=True)
+    except Exception as e: 
+        st.error(f"Could not find image at: {homepage_img}")
 
     st.title("Welcome to Virtual Scout 🏆")
     st.markdown("""
@@ -114,7 +123,11 @@ elif mode == "Single Player Stats":
             col_img, col_info = st.columns([1, 4])
             with col_img:
                 if player_name == "Kylian Mbappé":
-                    try: st.image("Kylian_Mbappe.png", width=150)
+                    # 1. Get dynamic path (The Fix)
+                    current_dir = os.path.dirname(os.path.abspath(__file__))
+                    mbappe_img = os.path.join(current_dir, "Kylian_Mbappe.png")
+                    
+                    try: st.image(mbappe_img, width=150)
                     except: st.write("Image missing")
                 else: st.markdown("## 👕") 
             with col_info:
