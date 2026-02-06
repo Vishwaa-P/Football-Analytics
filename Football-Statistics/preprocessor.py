@@ -1,15 +1,24 @@
 import pandas as pd
 import numpy as np
+import os  # <--- CRITICAL FIX: To find the file path automatically
 
 # ============================================================
 # LOAD & CLEAN RAW DATA
 # ============================================================
-def load_data(path="final_dataset.csv"):
+def load_data():
+    # 1. Get the folder where THIS file (preprocessor.py) lives
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # 2. Build the full path to the CSV file
+    # This combines the folder path + filename safely
+    csv_path = os.path.join(current_dir, "players_data_light-2024_2025.csv")
+    
+    # 3. Load it
     try:
-        df = pd.read_csv(path)
+        df = pd.read_csv(csv_path)
     except FileNotFoundError:
-        # Fallback for demo/testing
-        df = pd.read_csv("players_data_light-2024_2025.csv")
+        # Stop everything and tell us if the file is missing
+        raise FileNotFoundError(f"❌ Error: Could not find the CSV file at: {csv_path}")
 
     required_cols = [
         "Player", "Nation", "Pos", "Squad", "Comp", "Age", "MP", "Min", "90s",
@@ -166,8 +175,9 @@ def process_single_df(df, position_code):
     
     return df
 
-def get_processed_data(path="final_dataset.csv"):
-    df = load_data(path)
+def get_processed_data():
+    # Load data using the NEW dynamic path logic
+    df = load_data()
 
     # Split
     df_fw = df[df["Pos"] == "FW"].copy()
@@ -185,4 +195,4 @@ def get_processed_data(path="final_dataset.csv"):
     df_centerback = process_single_df(df_centerback, "CB")
     df_gk = process_single_df(df_gk, "GK")
 
-    return df_fw, df_mf, df_fullback, df_centerback, df_gk 
+    return df_fw, df_mf, df_fullback, df_centerback, df_gk
