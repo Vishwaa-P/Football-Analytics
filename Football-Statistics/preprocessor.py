@@ -1,15 +1,21 @@
 import pandas as pd
 import numpy as np
-
+import os
 # ============================================================
 # LOAD & CLEAN RAW DATA
 # ============================================================
 def load_data(path="final_dataset.csv"):
+    # 1. Get the folder where THIS python file is located
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # 2. Join it with the CSV filename
+    csv_path = os.path.join(current_dir, "players_data_light-2024_2025.csv")
+
     try:
         df = pd.read_csv(path)
     except FileNotFoundError:
-        # Fallback for demo/testing
-        df = pd.read_csv("players_data_light-2024_2025.csv")
+        # Fallback using the dynamic path we just created
+        df = pd.read_csv(csv_path)
 
     required_cols = [
         "Player", "Nation", "Pos", "Squad", "Comp", "Age", "MP", "Min", "90s",
